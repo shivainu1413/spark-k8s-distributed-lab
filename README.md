@@ -1,4 +1,4 @@
-# Spark on Kubernetes
+# Spark K8s Distributed Lab
 
 > A distributed data processing lab with real-time visualization — deploy Apache Spark on Kubernetes, write PySpark interactively in JupyterLab, and watch Pod lifecycle, data flow, and Shuffle operations happen live on a custom dashboard.
 
@@ -56,8 +56,8 @@ This project builds a complete Spark-on-Kubernetes environment from scratch usin
 ## Getting Started
 
 ```bash
-git clone https://github.com/shivainu1413/spark-on-kubernetes.git
-cd spark-on-kubernetes
+git clone https://github.com/shivainu1413/spark-k8s-distributed-lab.git
+cd spark-k8s-distributed-lab
 
 # 1. Install tools (minikube, kubectl, helm)
 ./scripts/01-install-tools.sh
@@ -93,16 +93,6 @@ Open in browser:
 - `http://localhost:18080` — Spark History Server
 
 Run notebook cells one by one and watch the Dashboard react in real-time.
-
-## Screenshots
-
-| Dashboard (Dark) | Dashboard (Light) |
-|---|---|
-| ![](./screenshots/dashboard-dark.png) | ![](./screenshots/dashboard-light.png) |
-
-| Notebook + Dashboard | Spark History Server |
-|---|---|
-| ![](./screenshots/notebook-dashboard.png) | ![](./screenshots/history-server.png) |
 
 ## Project Structure
 

@@ -20,6 +20,3 @@ __pycache__/
 # Data (large files)
 data/sample-input/sales_data_large.csv
 
-# Screenshots placeholder
-screenshots/*.png
-cover.png

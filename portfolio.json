@@ -1,7 +1,7 @@
 {
-  "title": "Spark on Kubernetes",
-  "subtitle": "Distributed data processing lab with real-time visualization dashboard",
-  "cover": "https://raw.githubusercontent.com/shivainu1413/spark-on-kubernetes/main/cover.png",
+  "title": "Spark K8s Distributed Lab",
+  "subtitle": "Interactive distributed processing lab with real-time visualization",
+  "cover": "https://raw.githubusercontent.com/shivainu1413/spark-k8s-distributed-lab/main/cover.png",
   "techStack": ["spark", "kubernetes", "python", "pyspark", "docker", "minio", "jupyter"],
   "category": "Data Engineering",
   "status": "active",
