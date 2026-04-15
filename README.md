@@ -2,7 +2,7 @@
 
 > A distributed data processing lab with real-time visualization — deploy Apache Spark on Kubernetes, write PySpark interactively in JupyterLab, and watch Pod lifecycle, data flow, and Shuffle operations happen live on a custom dashboard.
 
-![Cover](./cover.png)
+![Cover](./screenshots/cover.png)
 
 ## Overview
 
