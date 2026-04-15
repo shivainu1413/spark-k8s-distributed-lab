@@ -1,12 +1,12 @@
 # Spark K8s Distributed Lab
 
-> A distributed data processing lab with real-time visualization — deploy Apache Spark on Kubernetes, write PySpark interactively in JupyterLab, and watch Pod lifecycle, data flow, and Shuffle operations happen live on a custom dashboard.
+> A cloud-native distributed data processing platform with real-time observability — Apache Spark on Kubernetes with Dynamic Allocation, interactive PySpark via JupyterLab, and a custom monitoring dashboard visualizing Pod lifecycle, data flow, and Shuffle operations in real-time.
 
 ![Cover](./screenshots/cover.png)
 
 ## Overview
 
-This project builds a complete Spark-on-Kubernetes environment from scratch using Minikube, designed as a hands-on learning tool and interview portfolio piece. It goes beyond typical tutorials by including an interactive JupyterLab notebook (Client Mode) paired with a real-time monitoring dashboard that visualizes how distributed processing actually works — Executor Pods dynamically scaling up/down, data flowing from MinIO to Executors, and Shuffle operations exchanging data between nodes.
+A fully containerized Spark-on-Kubernetes environment built from the ground up with Minikube. The platform combines an interactive JupyterLab notebook running in Client Mode with a real-time monitoring dashboard that provides visibility into how distributed processing operates at the infrastructure level — Executor Pods dynamically scaling based on workload, data flowing between MinIO (S3) and compute nodes, and Shuffle operations redistributing data across Executors during aggregation stages.
 
 ## Tech Stack
 
