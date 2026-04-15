@@ -1,0 +1,52 @@
+# ============================================================
+# K8s Exercise 2: Deployment - Controller managing multiple Pods
+#
+# Deployment helps you:
+#   - Maintain specified number of Pods (replicas)
+#   - Automatically restart crashed Pods
+#   - Rolling updates (zero-downtime version updates)
+#
+# This is like Spark Executor management - you tell K8s "I want 3 Executors"
+# K8s ensures 3 are always running, automatically replaces any that crash
+#
+# Steps:
+#   1. kubectl apply -f k8s/00-learn-k8s-basics/02-deployment.yaml
+#   2. kubectl get deployment -n spark-demo     # View Deployment status
+#   3. kubectl get pods -n spark-demo           # View 3 Pods created
+#   4. kubectl delete pod <any-pod-name> -n spark-demo  # Delete one Pod
+#   5. kubectl get pods -n spark-demo           # Observe: K8s auto-replaces it!
+#
+# Learning points:
+#   - replicas: 3 means "I always want 3 Pods running"
+#   - selector and template labels must match
+#   - This is K8s "self-healing" capability
+# ============================================================
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+  namespace: spark-demo
+  labels:
+    app: nginx
+spec:
+  replicas: 3             # Maintain 3 Pods - try changing to 5
+  selector:
+    matchLabels:
+      app: nginx          # Use this label to find "my managed Pods"
+  template:               # Template for each Pod below
+    metadata:
+      labels:
+        app: nginx        # Each Pod will have this label
+    spec:
+      containers:
+        - name: nginx
+          image: nginx:alpine
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "64Mi"
+            limits:
+              cpu: "200m"
+              memory: "128Mi"

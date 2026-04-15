@@ -1,0 +1,26 @@
+# ============================================================
+# Custom Spark Image
+#
+# Based on official Spark image, adds:
+#   - hadoop-aws: Enables Spark to use s3a:// with MinIO
+#   - aws-java-sdk-bundle: AWS SDK (dependency for hadoop-aws)
+#   - Our PySpark code
+#
+# Why custom image?
+#   Official apache/spark image does not include S3 connector
+#   Without it, Spark will error when reading s3a:// paths
+# ============================================================
+FROM apache/spark:3.5.3
+
+USER root
+
+# Download Hadoop AWS and AWS SDK (versions must match Hadoop version built into Spark 3.5.3)
+RUN curl -L -o /opt/spark/jars/hadoop-aws-3.3.4.jar \
+    https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-aws/3.3.4/hadoop-aws-3.3.4.jar && \
+    curl -L -o /opt/spark/jars/aws-java-sdk-bundle-1.12.262.jar \
+    https://repo1.maven.org/maven2/com/amazonaws/aws-java-sdk-bundle/1.12.262/aws-java-sdk-bundle-1.12.262.jar
+
+# Copy our ETL code into the image
+COPY jobs/etl-pipeline/etl_pipeline.py /opt/spark/work-dir/etl_pipeline.py
+
+USER 185

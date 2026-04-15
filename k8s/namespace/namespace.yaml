@@ -1,0 +1,16 @@
+# ============================================================
+# Namespace: Separate our resources from K8s system resources
+#
+# Think of namespace like a "folder"
+# K8s system resources are in kube-system
+# Our Spark-related services are in spark-demo
+#
+# Usage: kubectl apply -f k8s/namespace/namespace.yaml
+# ============================================================
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: spark-demo
+  labels:
+    project: spark-on-k8s
+    purpose: learning

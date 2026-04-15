@@ -1,0 +1,47 @@
+# ============================================================
+# SparkPi - First Spark on K8s Job
+#
+# This SparkApplication will:
+#   1. Spark Operator sees this YAML -> creates Driver Pod
+#   2. Driver Pod starts -> requests 2 Executor Pods from K8s
+#   3. Driver distributes Pi calculation tasks to 2 Executors
+#   4. Executors compute and return results -> Driver collects and prints Pi approximation
+#   5. Job ends -> Executors are destroyed, Driver becomes Completed
+#
+# Usage: kubectl apply -f jobs/spark-pi/spark-pi.yaml
+# Check status: kubectl get sparkapplication spark-pi -n spark-demo
+# View results: kubectl logs <driver-pod-name> -n spark-demo | grep "Pi is roughly"
+# ============================================================
+apiVersion: sparkoperator.k8s.io/v1beta2
+kind: SparkApplication
+metadata:
+  name: spark-pi
+  namespace: spark-demo
+spec:
+  type: Scala
+  mode: cluster                    # Driver runs in K8s Pod (not on your machine)
+  image: apache/spark:3.5.3        # Using 3.5.3 for stable and small image
+  mainClass: org.apache.spark.examples.SparkPi
+  mainApplicationFile: local:///opt/spark/examples/jars/spark-examples_2.12-3.5.3.jar
+  arguments:
+    - "1000"                       # Calculation precision (larger number = more accurate, slower)
+  sparkVersion: "3.5.3"
+
+  restartPolicy:
+    type: Never                    # No retry on failure (for learning purposes)
+
+  driver:
+    cores: 1
+    memory: "512m"                 # Limited for 8GB Mac
+    serviceAccount: spark          # Use the ServiceAccount we created
+    labels:
+      app: spark-pi
+      role: driver
+
+  executor:
+    cores: 1
+    instances: 2                   # 2 Executors - demonstrates distributed processing
+    memory: "512m"
+    labels:
+      app: spark-pi
+      role: executor

@@ -1,0 +1,18 @@
+{
+  "title": "Spark on Kubernetes",
+  "subtitle": "Distributed data processing lab with real-time visualization dashboard",
+  "cover": "https://raw.githubusercontent.com/shivainu1413/spark-on-kubernetes/main/cover.png",
+  "techStack": ["spark", "kubernetes", "python", "pyspark", "docker", "minio", "jupyter"],
+  "category": "Data Engineering",
+  "status": "active",
+  "featured": true,
+  "order": 1,
+  "demoUrl": "",
+  "highlights": [
+    "Interactive JupyterLab notebook with real-time K8s monitoring dashboard",
+    "Dynamic Allocation — Executor Pods auto-scale based on workload",
+    "Full ETL pipeline: CSV (S3) → Clean → Shuffle → Parquet",
+    "Canvas-based visualization of Pod lifecycle, data flow, and Shuffle operations",
+    "Spark History Server for reviewing DAG, Stage, and Shuffle metrics"
+  ]
+}

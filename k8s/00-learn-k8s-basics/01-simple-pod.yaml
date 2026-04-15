@@ -1,0 +1,38 @@
+# ============================================================
+# K8s Exercise 1: Create the simplest Pod
+#
+# Pod is K8s smallest execution unit, runs one container
+# This example runs an nginx web server
+#
+# Steps:
+#   1. kubectl apply -f k8s/00-learn-k8s-basics/01-simple-pod.yaml
+#   2. kubectl get pods -n spark-demo          # View Pod status
+#   3. kubectl describe pod nginx -n spark-demo # View Pod details
+#   4. kubectl logs nginx -n spark-demo         # View Pod logs
+#   5. kubectl delete pod nginx -n spark-demo   # Delete Pod
+#
+# Learning points:
+#   - Pod is the minimal unit, but we typically don't create Pods directly
+#   - Directly created Pods are lost if they crash, won't restart automatically
+#   - Later we'll learn Deployment which manages Pod lifecycle
+# ============================================================
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+  namespace: spark-demo
+  labels:
+    app: nginx          # Label is K8s tag for "finding" Pods
+spec:
+  containers:
+    - name: nginx
+      image: nginx:alpine     # Using lightweight nginx image
+      ports:
+        - containerPort: 80   # Container exposes port 80
+      resources:
+        requests:             # Minimum required resources
+          cpu: "100m"         # 100 millicores = 0.1 core
+          memory: "64Mi"      # 64 MB memory
+        limits:               # Maximum allowed resources
+          cpu: "200m"
+          memory: "128Mi"

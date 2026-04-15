@@ -1,0 +1,72 @@
+# ============================================================
+# JupyterLab Pod - Spark Driver (Client Mode)
+#
+# This Pod does two things:
+#   1. Runs JupyterLab (port 8888) - your interface for writing PySpark
+#   2. Acts as Spark Driver - directly requests Executor Pods from K8s
+#
+# Also exposes port 4040 (Spark UI) for Dashboard access
+# ============================================================
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jupyter-spark
+  namespace: spark-demo
+  labels:
+    app: jupyter-spark
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: jupyter-spark
+  template:
+    metadata:
+      labels:
+        app: jupyter-spark
+    spec:
+      serviceAccountName: spark    # Need permissions to create Executor Pods
+      containers:
+        - name: jupyter
+          image: jupyter-spark:latest
+          imagePullPolicy: Never     # Pull from local Minikube registry
+          ports:
+            - containerPort: 8888    # JupyterLab
+              name: jupyter
+            - containerPort: 4040    # Spark UI
+              name: spark-ui
+            - containerPort: 29413   # Spark Driver RPC
+              name: driver
+            - containerPort: 29414   # Spark BlockManager
+              name: block-mgr
+          resources:
+            requests:
+              cpu: "500m"
+              memory: "512Mi"
+            limits:
+              cpu: "1"
+              memory: "1Gi"
+          env:
+            - name: SPARK_HOME
+              value: /opt/spark
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: jupyter-spark-svc
+  namespace: spark-demo
+spec:
+  selector:
+    app: jupyter-spark
+  ports:
+    - port: 8888
+      targetPort: 8888
+      name: jupyter
+    - port: 4040
+      targetPort: 4040
+      name: spark-ui
+    - port: 29413
+      targetPort: 29413
+      name: driver
+    - port: 29414
+      targetPort: 29414
+      name: block-mgr

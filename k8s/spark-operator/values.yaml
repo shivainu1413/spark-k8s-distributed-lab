@@ -1,0 +1,36 @@
+# ============================================================
+# Spark Operator Helm Chart custom configuration
+#
+# Spark Operator is a resident Pod responsible for:
+#   1. Listening for submitted SparkApplication resources (CRD)
+#   2. Creating Driver Pod and Executor Pods for you
+#   3. Monitoring job status and handling failure retries
+#
+# Official documentation: https://kubeflow.github.io/spark-operator/
+# ============================================================
+
+# Which namespaces should the Operator monitor for SparkApplication
+spark:
+  jobNamespaces:
+    - spark-demo        # Only monitor our namespace
+
+# Resource limits for the Operator itself (memory efficient)
+controller:
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "128Mi"
+    limits:
+      cpu: "500m"
+      memory: "256Mi"
+
+# Webhook for Pod mutation (e.g., automatically mounting volumes)
+webhook:
+  enable: true
+  resources:
+    requests:
+      cpu: "50m"
+      memory: "64Mi"
+    limits:
+      cpu: "200m"
+      memory: "128Mi"

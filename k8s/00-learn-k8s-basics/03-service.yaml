@@ -1,0 +1,37 @@
+# ============================================================
+# K8s Exercise 3: Service - Stable entrypoint for Pods
+#
+# Problem: Pod IP changes on every restart, how do others find it?
+# Answer: Service! It provides fixed DNS name and IP
+#
+# Spark analogy:
+#   Spark Driver needs stable address for Executors to report results
+#   On K8s, a Service sits in front of Driver Pod
+#
+# Steps:
+#   1. Ensure 02-deployment.yaml is already applied
+#   2. kubectl apply -f k8s/00-learn-k8s-basics/03-service.yaml
+#   3. kubectl get service -n spark-demo        # View Service
+#   4. kubectl describe service nginx-svc -n spark-demo  # See connected Pods
+#
+# Testing access:
+#   minikube service nginx-svc -n spark-demo    # Minikube opens browser
+#
+# Learning points:
+#   - Service finds matching Pods via selector
+#   - ClusterIP: accessible only within cluster (default)
+#   - NodePort: accessible from outside (for dev/testing)
+# ============================================================
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-svc
+  namespace: spark-demo
+spec:
+  type: NodePort          # NodePort allows external access
+  selector:
+    app: nginx            # Find all Pods with label app=nginx
+  ports:
+    - port: 80            # Service port
+      targetPort: 80      # Forward to Pod port
+      nodePort: 30080     # External access port (30000-32767)

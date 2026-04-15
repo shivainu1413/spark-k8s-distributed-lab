@@ -1,0 +1,89 @@
+# ============================================================
+# Spark History Server
+#
+# Keeps records of completed jobs so you can review DAG, Stage, Shuffle anytime
+# No need to rush to open Spark UI before the job finishes
+#
+# Web UI: http://localhost:18080 (via port-forward)
+# ============================================================
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spark-history
+  namespace: spark-demo
+  labels:
+    app: spark-history
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: spark-history
+  template:
+    metadata:
+      labels:
+        app: spark-history
+    spec:
+      containers:
+        - name: spark-history
+          image: apache/spark:3.5.3
+          command:
+            - /opt/spark/sbin/start-history-server.sh
+          env:
+            - name: SPARK_HISTORY_OPTS
+              value: >-
+                -Dspark.history.fs.logDirectory=s3a://spark-logs/history
+                -Dspark.hadoop.fs.s3a.endpoint=http://minio-svc.spark-demo.svc.cluster.local:9000
+                -Dspark.hadoop.fs.s3a.access.key=minioadmin
+                -Dspark.hadoop.fs.s3a.secret.key=minioadmin
+                -Dspark.hadoop.fs.s3a.path.style.access=true
+                -Dspark.hadoop.fs.s3a.impl=org.apache.hadoop.fs.s3a.S3AFileSystem
+                -Dspark.hadoop.fs.s3a.connection.ssl.enabled=false
+            - name: SPARK_NO_DAEMONIZE
+              value: "true"
+          ports:
+            - containerPort: 18080
+              name: web
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+          volumeMounts:
+            - name: spark-jars
+              mountPath: /opt/spark/jars/hadoop-aws-3.3.4.jar
+              subPath: hadoop-aws-3.3.4.jar
+            - name: spark-jars
+              mountPath: /opt/spark/jars/aws-java-sdk-bundle-1.12.262.jar
+              subPath: aws-java-sdk-bundle-1.12.262.jar
+      initContainers:
+        - name: download-jars
+          image: curlimages/curl:latest
+          command:
+            - sh
+            - -c
+            - |
+              curl -L -o /jars/hadoop-aws-3.3.4.jar \
+                https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-aws/3.3.4/hadoop-aws-3.3.4.jar && \
+              curl -L -o /jars/aws-java-sdk-bundle-1.12.262.jar \
+                https://repo1.maven.org/maven2/com/amazonaws/aws-java-sdk-bundle/1.12.262/aws-java-sdk-bundle-1.12.262.jar
+          volumeMounts:
+            - name: spark-jars
+              mountPath: /jars
+      volumes:
+        - name: spark-jars
+          emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: spark-history-svc
+  namespace: spark-demo
+spec:
+  selector:
+    app: spark-history
+  ports:
+    - port: 18080
+      targetPort: 18080
+      name: web

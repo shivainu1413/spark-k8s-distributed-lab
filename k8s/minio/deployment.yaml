@@ -1,0 +1,60 @@
+# ============================================================
+# MinIO - S3-compatible object storage (simulates AWS S3)
+#
+# Why MinIO?
+#   In production, Spark typically reads/writes data from S3/GCS/ADLS
+#   MinIO allows you to simulate this architecture locally
+#   Your PySpark code uses s3a:// paths, just like real S3
+#
+# Default credentials: minioadmin / minioadmin
+# Web UI: http://localhost:9001 (via port-forward)
+# ============================================================
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: minio
+  namespace: spark-demo
+  labels:
+    app: minio
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: minio
+  template:
+    metadata:
+      labels:
+        app: minio
+    spec:
+      containers:
+        - name: minio
+          image: minio/minio:latest
+          args:
+            - server
+            - /data
+            - --console-address
+            - ":9001"
+          ports:
+            - containerPort: 9000    # S3 API
+              name: api
+            - containerPort: 9001    # Web management console
+              name: console
+          env:
+            - name: MINIO_ROOT_USER
+              value: "minioadmin"
+            - name: MINIO_ROOT_PASSWORD
+              value: "minioadmin"
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "500m"
+              memory: "256Mi"
+          volumeMounts:
+            - name: minio-data
+              mountPath: /data
+      volumes:
+        - name: minio-data
+          emptyDir: {}           # For simplicity, using emptyDir - data is lost on Pod restart
+                                 # Production environments would use PersistentVolumeClaim

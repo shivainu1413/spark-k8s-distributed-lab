@@ -1,0 +1,24 @@
+# ============================================================
+# MinIO Service
+#
+# Allows other Pods in the cluster (Spark Driver/Executor) to find MinIO
+# using a fixed DNS name
+#
+# Internal cluster access: minio-svc.spark-demo.svc.cluster.local:9000
+# Spark uses this address to read/write data
+# ============================================================
+apiVersion: v1
+kind: Service
+metadata:
+  name: minio-svc
+  namespace: spark-demo
+spec:
+  selector:
+    app: minio
+  ports:
+    - port: 9000           # S3 API
+      targetPort: 9000
+      name: api
+    - port: 9001           # Web management console
+      targetPort: 9001
+      name: console
